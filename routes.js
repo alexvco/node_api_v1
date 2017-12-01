@@ -53,12 +53,12 @@ routes.get('/', function(req, res){
 
 // INDEX
 routes.get('/api/v1/genres', function(req, res) {
-  console.log('all');
   // For some reason mongoose was not working so i decided to use mongo client instead, hopefully there is a way to refactor this code
   MongoClient.connect(url, function(err, db) {
     if (err) throw err;
     db.collection("genres").find().toArray(function(err, result) {
       if (err) throw err;
+      // console.log(result);
       res.json(result);
       db.close();
     });
@@ -81,10 +81,19 @@ routes.get('/api/v1/genres/:_id', function(req, res) {
   var id = req.params._id;
   MongoClient.connect(url, function(err, db) {
     if (err) throw err;
-    console.log("if id not found render json 404");
+    // A promise is a substitute temporary value that is given while you wait on the real value (async programming). To get the real value you need to add 'then' with a callback function
+    // db.collection("genres").find({_id: ObjectId(id)}).count()
+    //   .then(function(myresult){
+    //     console.log(myresult);
+    //   });
     db.collection("genres").findOne({_id: ObjectId(id)}, function(err, result) {
       if (err) throw err;
-      res.json(result);
+      // console.log(result);
+      if (!result) {
+        res.status(404).json({ message: 'Genre not found.' });
+      } else {
+        res.json(result);
+      }
       db.close();
     });
   });
@@ -108,6 +117,7 @@ routes.post('/api/v1/genres', function(req, res) {
     if (err) throw err;
     db.collection("genres").insertOne(genre, function(err, result) {
       if (err) throw err;
+      // console.log(result);
       res.json(result);
       db.close();
     });
@@ -138,7 +148,12 @@ routes.put('/api/v1/genres/:_id', function(req, res) {
     if (err) throw err;
     db.collection("genres").updateOne({_id: ObjectId(id)}, updates, function(err, result) {
       if (err) throw err;
-      res.json(result);
+      // console.log(result);
+      if (result.modifiedCount > 0) {
+        res.json(result);
+      } else {
+        res.status(404).json({ message: 'Genre not found.' });
+      }
       db.close();
     });
   });
@@ -168,7 +183,13 @@ routes.delete('/api/v1/genres/:_id', function(req, res) {
     if(err) throw err;
     db.collection("genres").deleteOne({_id: ObjectId(id)}, function(err, result) {
       if (err) throw err;
-      res.json(result);
+      // console.log(result);
+      // console.log(result.result.n);
+      if (result.deletedCount > 0) {
+        res.json(result);
+      } else {
+        res.status(404).json({ message: 'Genre not found.' });
+      }
       db.close();
     });
   });

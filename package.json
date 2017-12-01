@@ -5,6 +5,8 @@
   "description": "",
   "main": "routes.js",
   "scripts": {
+    "start": "node routes.js",
+    "dev": "nodemon routes.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
