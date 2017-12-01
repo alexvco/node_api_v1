@@ -1,5 +1,4 @@
 {
-  "//": "To generate this file type in cli: npm init",
   "//": "To To install the added dependencies type in cli: npm install",
   "name": "node_api_v1",
   "version": "1.0.0",
